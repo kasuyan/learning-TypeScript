@@ -440,3 +440,71 @@ ESLint, Prettier, Debugger for Chrome,
 
 変数を定義します。
 変数なので値を変更できます。
+
+## アロー関数
+
+```
+const add = (a:number, b:number) => {
+  return a + b;
+}
+const add2 = (a:number, b:number) => a + b;
+const add3: (s:string) => string = s => `my name is ${s}`
+console.log(add(1,2));
+```
+
+## デフォルト関数パラメータ
+
+左側だけにデフォルトパラメータは設定できないよ
+
+```
+const add = (a:number, b:number = 2) => a + b;
+```
+
+## スプレッドオペレータ
+
+```
+const hobbies = ['Sports', 'cooking'];
+const activehobbies = ['Hiking'];
+activehobbies.push(...hobbies)
+
+const person = {
+  name: "make",
+  age: 30
+}
+
+const copiedPerson = {...person};
+
+```
+
+## レストパラメータ
+
+```
+const add = (...numbers:number[]) => {
+  let result = 0;
+  return numbers.reduce((curResult, curValue) => {
+    return curResult + curValue
+  }, 0)
+}
+
+const addedNumbers = add(5,10,2,43)
+console.log(addedNumbers)
+
+```
+
+## 配列とオブジェクトの分割代入
+
+```
+const hobbies = ['Sports', 'cooking'];
+const [hobby1, hobby2, ...hoge] = hobbies;
+```
+
+```
+const person = {
+  nickName: "make",
+  age: 30
+}
+
+const {nickName:name2, age} = person;
+// nickNameではなくname2で受け取ることもできる。
+// :は型指定の:ではない。
+```
