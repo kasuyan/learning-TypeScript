@@ -428,3 +428,15 @@ files:['test.ts']
 ESLint, Prettier, Debugger for Chrome,
 
 # JS と TS
+
+## let と const
+
+### const
+
+定数を定義します。
+定数なので値を変更できません。
+
+### let
+
+変数を定義します。
+変数なので値を変更できます。
