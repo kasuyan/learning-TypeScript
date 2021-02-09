@@ -679,3 +679,259 @@ class Department {
 const accounting = new Department('d1','Accounting');
 accounting.describe(); // 1 Accounting
 ```
+
+## 継承
+
+```
+class Department {
+  employees: string[] = [];
+
+  // コンストラクタ
+  constructor(private readonly id:string, public name: string){
+    // プライベートのidとパブリックのnameのプロパティを作れる。
+  }
+
+  // メソッド
+  describe() {
+    console.log(`Department ${this.id} ${this.name}`)
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee)
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees)
+  }
+}
+
+// 継承
+class ITDepartiment extends Department {
+  // admins: string[];
+
+  constructor(id: string, private admins: string[]) {
+    // 継承しているのでsuperを使ってベースクラスのコンストラクタを実行する
+    super(id, 'IT');
+    this.admins = admins;
+  }
+}
+```
+
+## プロパティのオーバーライドと protected
+
+```
+class Department {
+  private employees: string[] = [];
+  // このクラスと継承したクラスからアクセスできる。
+  protected employees: string[] = [];
+
+  // コンストラクタ
+  constructor(private readonly id:string, public name: string){
+    // プライベートのidとパブリックのnameのプロパティを作れる。
+  }
+
+  // メソッド
+  describe() {
+    console.log(`Department ${this.id} ${this.name}`)
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee)
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees)
+  }
+}
+
+class ITDepartiment extends Department {
+  // admins: string[];
+
+  constructor(id: string, private admins: string[]) {
+    // 継承しているのでsuperを使ってベースクラスのコンストラクタを実行する
+    super(id, 'IT');
+    this.admins = admins;
+  }
+
+  // 継承元のメソッドを上書きして定義できる（オーバーライド）
+  addEmployee(name:string) {
+    if(name === 'Max') {
+      return
+    }
+    // empolyeesはpravateなのでアクセスできない。
+    // 継承したクラスからアクセスしたい場合は protectedを使う。
+    this.employees.push(name);
+  }
+}
+```
+
+## Getter and Setter
+
+```
+class AccountingDepartment extends Department {
+  prrivate lastReport: string;
+
+  get mostRecentReport() {
+    if ( this.lastReport) {
+      return this.lastReport;
+    }
+    throw new Error('レポートがありません')
+  }
+
+  set mostRecentReport(value: string){
+    if(value) {
+      return new Error('正しい値を設定してください')
+    }
+    this.addReport(value);
+  }
+
+  constructor(id: string, private admins: string[]) {
+    super(id, 'Accounting');
+    this.admins = admins;
+    this.lastReport: reports[0];
+  }
+
+  addReport(text: string) {
+    this.reports.push(text)
+    this.lastReport = test;
+  }
+}
+const accounting = new AccountingDepartment('d2', [])
+console.log(accounting.mostRecentReport)
+accounting.addReport('SomeThings')
+accounting.mostRecentReport('レポート');
+
+```
+
+## static メソッドとプロパティ
+
+Math.random()などは Math の random メソッドですので、
+本来なら Math のインスタンスを生成してそこからアクセししないと利用できないはずですが、
+それをしなくても Math.random()は利用できます。
+これが static メソッドです。
+また、インスタンスからアクセスはできません。
+
+```
+class Department {
+  // staticプロパティ
+  static fiscalYear = 2021;
+  private employees: string[] = [];
+  // このクラスと継承したクラスからアクセスできる。
+  protected employees: string[] = [];
+
+  // staticメソッド
+  static createEmployee(name: string) {
+    return {name: name};
+  }
+
+  // コンストラクタ
+  constructor(private readonly id:string, public name: string){
+    // プライベートのidとパブリックのnameのプロパティを作れる。
+
+    //エラーになる
+    console.log(this.fiscalYear)
+    // アクセスしたい場合は
+    console.log(Department.fiscalYear)
+  }
+
+  // メソッド
+  describe() {
+    console.log(`Department ${this.id} ${this.name}`)
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee)
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees)
+  }
+}
+
+const employee1 = Department.createEmployee('Max', Departiment.fiscalYear); // Max, 2021
+```
+
+## abstract クラス
+
+継承元のメソッドなどを継承した先で強制的にオーバーライドする必要があるときに
+abstract を定義することで継承先でオーバーライドを必須にすることができる。
+
+継承元で共通のメソッドや値を定義して詳しい実装は継承先に任せることができます。
+abstract されたクラスはインスタンス化できません
+継承専用のクラスになります。
+
+```
+abstract class Department {
+  protected employees: string[] = [];
+
+  // コンストラクタ
+  constructor(private readonly id:string, public name: string){
+  }
+
+  // メソッド
+  abstract describe(this: Department) : void;
+}
+
+class B extends Department {
+  describe() {
+    console.log('オーバーライドしたよ')
+  }
+}
+```
+
+## シングルトンと praivate コンストラクタ
+
+常に１つのオブジェクトしか存在しない状態にするのがシングルトン
+これは static が使えない環境だと便利です。
+
+このクラスは一つだけにしたい場合
+
+```
+class AccountingDepartment extends Department {
+  prrivate lastReport: string;
+  private static instance: AccountingDepartment;
+
+  get mostRecentReport() {
+    if ( this.lastReport) {
+      return this.lastReport;
+    }
+    throw new Error('レポートがありません')
+  }
+
+  set mostRecentReport(value: string){
+    if(value) {
+      return new Error('正しい値を設定してください')
+    }
+    this.addReport(value);
+  }
+
+  // プライベートコンストラクタにする
+  private constructor(id: string, private admins: string[]) {
+    super(id, 'Accounting');
+    this.admins = admins;
+    this.lastReport: reports[0];
+  }
+
+  static getInstance() {
+    if ( this.instance ) {
+      return this.instance
+    }
+    this.instanc = new AccountingDepartment('D2', []);
+    return this.instanc;
+  }
+
+  addReport(text: string) {
+    this.reports.push(text)
+    this.lastReport = test;
+  }
+}
+
+// エラーになる。
+new AccountingDepartment('d2', [])
+// OK
+const accounting = AccountingDepartment.getInstance();
+
+```
