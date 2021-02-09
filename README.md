@@ -508,3 +508,174 @@ const {nickName:name2, age} = person;
 // nickNameではなくname2で受け取ることもできる。
 // :は型指定の:ではない。
 ```
+
+# クラスとインターフェイス
+
+## クラスとは
+
+### オブジェクトとは
+
+プログラミングコードで扱うもの
+
+クラスのインスタンスである
+
+オブジェクトリテラルの定義の代わりにオブジェクトを作成する手段
+
+### クラス
+
+オブジェクトの設計図
+
+オブジェクトの構造を定義する
+
+## 最初のクラス
+
+```
+class Department {
+  name: string;
+
+  constructor(n: string){
+    this.name = n;
+  }
+}
+
+const accounting = new Department('Accounting');
+console.log(accounting);
+```
+
+## コンストラクタ関数と this
+
+```
+class Department {
+  name: string;
+
+  // コンストラクタ
+  constructor(n: string){
+    this.name = n;
+  }
+
+  // メソッド
+  describe() {
+    console.log("Department: " + this.name)
+  }
+  // メソッド2
+  // ここにthisを持たせることでDepartmentクラスからしか利用できないようにしてる
+  describe2(this:Department) {
+    console.log("Department: " + this.name)
+  }
+}
+
+const accounting = new Department('Accounting');
+console.log(accounting);
+accounting.describe();
+
+const copyAccounting = { describe: accounting.discribe }
+copyAccounting.sescribe(); // undefined
+
+const copyAccounting2 = { name: 'DUMMY', describe2: accounting.discribe2 }
+copyAccounting.sescribe2(); // DUMMY
+```
+
+## private and public
+
+```
+class Department {
+  name: string;
+  employees: string[] = [];
+
+  // コンストラクタ
+  constructor(n: string){
+    this.name = n;
+  }
+
+  // メソッド
+  describe() {
+    console.log("Department: " + this.name)
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee)
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees)
+  }
+}
+const accounting = new Department('Accounting');
+accounting.addEmployee("Asan");
+accounting.addEmployee("Bsan");
+accounting.printEmployeeInformation(); // 2, [Asan, Bsan]
+accounting.describe(); // Accounting
+```
+
+このままだと値をメソッドを使わずに変更できてしまいます。
+
+accounting.employees[2] = "Csan";
+
+それを防ぐために private を利用します。
+
+```
+private employees: string[] = [];
+```
+
+public はデフォルトの設定でどこからでもアクセスできる。
+
+## プロパティの初期化とショートカット構文
+
+```
+class Department {
+  employees: string[] = [];
+
+  // コンストラクタ
+  constructor(private id:string, public name: string){
+    // プライベートのidとパブリックのnameのプロパティを作れる。
+  }
+
+  // メソッド
+  describe() {
+    console.log(`Department ${this.id} ${this.name}`)
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee)
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees)
+  }
+}
+const accounting = new Department('d1','Accounting');
+accounting.describe(); // 1 Accounting
+```
+
+## readonly プロパティ
+
+読み取り専用になり、変更しようとするとエラーになる。
+
+```
+class Department {
+  employees: string[] = [];
+
+  // コンストラクタ
+  constructor(private readonly id:string, public name: string){
+    // プライベートのidとパブリックのnameのプロパティを作れる。
+  }
+
+  // メソッド
+  describe() {
+    console.log(`Department ${this.id} ${this.name}`)
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee)
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees)
+  }
+}
+const accounting = new Department('d1','Accounting');
+accounting.describe(); // 1 Accounting
+```
