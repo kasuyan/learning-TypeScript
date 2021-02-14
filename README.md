@@ -935,3 +935,130 @@ new AccountingDepartment('d2', [])
 const accounting = AccountingDepartment.getInstance();
 
 ```
+
+## インターフェース
+
+オブジェクトがどんな形であるかを表します。
+
+```
+interface Person {
+  name: string;
+  age: number;
+  greet(phrase: string): void;
+}
+
+let user1: Person;
+user1 = {
+  name: 'Max',
+  age: 30,
+  greet: (phrase:string) => {
+    console.log(phrase + this.name)
+  }
+}
+```
+
+## クラスでのインターフェイスを実装
+
+interface はオブジェクトの構造だけを記述することができる。
+
+inteface を使うことでオブジェクトを定義したいという意図が伝えられる
+
+クラスのインターフェイスは inteface, type どちらも利用できる。
+
+```
+interface Greetable = {
+  name: string;
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name: string;
+  age = 30;
+
+  constructor(n:string) {
+    this.name = n;
+  }
+
+  greet(phrase:string) {
+    console.log(phrase + this.name)
+  }
+}
+
+let user1: Greetable;
+user1 = {
+  name: 'Max',
+  age: 30, // エラー
+  greet: (phrase:string) => {
+    console.log(phrase + this.name)
+  }
+}
+
+```
+
+## 読み取り専用インターフェイスプロパティ
+
+初期化のときに一度だけ設定できるプロパティになる
+
+```
+interface Greetable {
+  readonly name: string;
+}
+```
+
+## interface の拡張
+
+```
+interface Named {
+  readonly name: string;
+}
+
+interface Greetable extends Named {
+  greet(phrase: string): void;
+}
+```
+
+## 関数型としてのインターフェイス
+
+```
+// こっちの方が一般的に
+type addFn = (a: number, b: number) => number;
+
+let add:addFn;
+add = (n1: number, n2:number) => {
+  return n1 + n2;
+}
+
+interface AddFn2 {
+  (a:number, b:number): number;
+}
+```
+
+## 任意のパラメータとプロパティ
+
+```
+interface Named {
+  // FIXME: readonly name?: string;
+  readonly name: string;
+  outputName?: string; // これは任意のプロパティにする
+}
+
+interface Greetable extends Named {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name?: string; // クラスにも任意のプロパティにできる。
+  // このままではエラーになる。なぜならNamedのnameが任意になってないから。
+  age = 30;
+
+  constructor(n:string) {
+    if (n) {
+      this.name = n;
+    }
+  }
+
+  greet(phrase:string) {
+    console.log(phrase + this.name)
+  }
+}
+```
